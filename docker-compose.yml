@@ -1,11 +1,10 @@
-version: '3'
-
 services:
    cloud-db:
      container_name: ${DB_CONTAINER_NAME}
      image: mariadb:${DB_IMAGE_TAG}
      command: --innodb_read_only_compressed=OFF
      restart: unless-stopped
+     user: root
      volumes:
         - ${LOCAL_DB_DIR}:/var/lib/mysql
      environment:
@@ -20,6 +19,9 @@ services:
      container_name: ${APP_CONTAINER_NAME}
      image: nextcloud:${APP_IMAGE_TAG}
      restart: unless-stopped
+     user: root
+     ports:
+       - 888:80
      volumes:
        - ${LOCAL_DATA_DIR}:/var/www/html
        - ${LOCAL_CONF_DIR}:/var/www/html/config
@@ -41,6 +43,6 @@ services:
        MYSQL_HOST: ${MYSQL_HOST}
 
 networks:
-    default:
-       external:
-         name: ${NETWORK}
+  default:
+    external: true
+    name: ${NETWORK}
